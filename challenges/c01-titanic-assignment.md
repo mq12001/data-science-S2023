@@ -159,6 +159,7 @@ df_titanic %>% summarize(total = sum(n))
   - Maybe a person who had booked a ticket but didn’t show?
   - An individual present that there wasn’t class, age, and sex data
     available for
+  - No data on whether they survived or not?
 
 ### **q3** Create a plot showing the count of persons who *did* survive, along with aesthetics for `Class` and `Sex`. Document your observations below.
 
@@ -175,9 +176,9 @@ df_titanic %>%
 
 **Observations**:
 
-- More females survived from 1st and 2nd class
-- Equal gender survival rates in 3rd class
-- Many more men survived from crew
+- More females than males survived from 1st and 2nd class
+- Equal numbers of each gender survived in 3rd class
+- Many more men than women survived from crew
 - More Crew survived in general than any class of passenger
 - These differences may be because there were many more crew in general
   than specific class of passenger
@@ -259,11 +260,11 @@ additional variables!
 df_prop %>%
   filter(Survived == "Yes") %>%
   ggplot() + 
-  geom_col(aes(x = Class, y = Prop, fill = Sex)) + 
-  facet_wrap(~ Age)
+  geom_col(aes(x = Class, y = Prop, fill = Sex), position = "Dodge") + 
+  facet_grid(~ Age)
 ```
 
-    ## Warning: Removed 2 rows containing missing values (`position_stack()`).
+    ## Warning: Removed 2 rows containing missing values (`geom_col()`).
 
 ![](c01-titanic-assignment_files/figure-gfm/q5-task-1.png)<!-- -->
 
