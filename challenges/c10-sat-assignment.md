@@ -295,7 +295,8 @@ df_composite %>%
 **Observations**:
 
 - To what extent does `both_SAT` look like a normal distribution?
-  - Looks very much like a normal distribution
+  - Looks very much like a normal distribution, but skews slightly left
+    and doesn’t have the distinctive tails.
     - Makes sense because the test is engineered to act as a normal
       distribution
 - To what extent does `high_GPA` look like a normal distribution?
@@ -399,7 +400,7 @@ int_pctl(df_q5, estimates)
     ## # A tibble: 1 × 6
     ##   term  .lower .estimate .upper .alpha .method   
     ##   <chr>  <dbl>     <dbl>  <dbl>  <dbl> <chr>     
-    ## 1 cor    0.697     0.781  0.849   0.05 percentile
+    ## 1 cor    0.695     0.779  0.850   0.05 percentile
 
 **Observations**:
 
@@ -507,12 +508,7 @@ further.
 
 ``` r
 ## TODO: Fit and assess models with predictors both_SAT + high_GPA, and high_GPA alone
-?lm
-```
 
-    ## starting httpd help server ... done
-
-``` r
 fit_both <- df_composite %>%
   lm(
     data = ., 

@@ -218,9 +218,9 @@ can.
 
 ``` r
 gapminder %>% 
-  filter(year == year_min, gdpPercap < 30000) %>% 
   ggplot() + 
-  geom_boxplot(aes(y = gdpPercap, x = continent))
+  geom_boxplot(aes(y = gdpPercap, x = continent)) + 
+  scale_y_log10()
 ```
 
 ![](c04-gapminder-assignment_files/figure-gfm/q2-task-1.png)<!-- -->
@@ -229,7 +229,7 @@ gapminder %>%
 
 - There’s a crazy outlier in Asia making it impossible to read any
   relevant information from the graph.
-- After that outlier is removed, it’s clear that Oceania has both the
+- After adding a scale of log10, it’s clear that Oceania has both the
   most consistent and the highest GDP per capita
   - The consistency is likely due to the drastically fewer number of
     countries located in Oceania

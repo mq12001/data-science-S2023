@@ -1,7 +1,7 @@
 COVID-19
 ================
-(Your name here)
-2020-
+Meredith Alley
+2023-5-7
 
 - <a href="#grading-rubric" id="toc-grading-rubric">Grading Rubric</a>
   - <a href="#individual" id="toc-individual">Individual</a>
@@ -193,8 +193,7 @@ To check your results, this is Table `B01003`.
 ## TASK: Load the census bureau data with the following tibble name.
 df_pop <- read_csv("./data/ACSDT5Y2018.B01003-Data.csv", skip = 1) %>% 
   select(c('Geography', 'Geographic Area Name', 'Estimate!!Total', 'Margin of Error!!Total')) %>% 
-  mutate(id = Geography) %>% 
-  select(!Geography)
+  rename(id = Geography)
 ```
 
     ## New names:
@@ -213,10 +212,10 @@ glimpse(df_pop)
 
     ## Rows: 3,220
     ## Columns: 4
+    ## $ id                       <chr> "0500000US01001", "0500000US01003", "0500000U…
     ## $ `Geographic Area Name`   <chr> "Autauga County, Alabama", "Baldwin County, A…
     ## $ `Estimate!!Total`        <dbl> 55200, 208107, 25782, 22527, 57645, 10352, 20…
     ## $ `Margin of Error!!Total` <chr> "*****", "*****", "*****", "*****", "*****", …
-    ## $ id                       <chr> "0500000US01001", "0500000US01003", "0500000U…
 
 *Note*: You can find information on 1-year, 3-year, and 5-year estimates
 [here](https://www.census.gov/programs-surveys/acs/guidance/estimates.html).
@@ -292,10 +291,10 @@ df_pop %>% glimpse
 
     ## Rows: 3,220
     ## Columns: 4
+    ## $ id                       <chr> "0500000US01001", "0500000US01003", "0500000U…
     ## $ `Geographic Area Name`   <chr> "Autauga County, Alabama", "Baldwin County, A…
     ## $ `Estimate!!Total`        <dbl> 55200, 208107, 25782, 22527, 57645, 10352, 20…
     ## $ `Margin of Error!!Total` <chr> "*****", "*****", "*****", "*****", "*****", …
-    ## $ id                       <chr> "0500000US01001", "0500000US01003", "0500000U…
 
 ``` r
 df_covid %>% glimpse
@@ -348,7 +347,7 @@ print("Very good!")
 
 ``` r
 ## TASK: Join df_covid and df_q3 by fips.
-df_q4 <- df_covid %>% right_join(df_q3, by = "fips")
+df_q4 <- df_covid %>% left_join(df_q3, by = "fips")
 ```
 
 For convenience, I down-select some columns and produce more convenient
@@ -371,7 +370,7 @@ df_data <-
 df_data
 ```
 
-    ## # A tibble: 2,474,019 × 7
+    ## # A tibble: 2,502,832 × 7
     ##    date       county      state      fips  cases deaths population
     ##    <date>     <chr>       <chr>      <chr> <dbl>  <dbl>      <dbl>
     ##  1 2020-01-21 Snohomish   Washington 53061     1      0     786620
@@ -384,7 +383,7 @@ df_data
     ##  8 2020-01-25 Snohomish   Washington 53061     1      0     786620
     ##  9 2020-01-26 Maricopa    Arizona    04013     1      0    4253913
     ## 10 2020-01-26 Los Angeles California 06037     1      0   10098052
-    ## # … with 2,474,009 more rows
+    ## # … with 2,502,822 more rows
 
 # Analyze
 
@@ -411,7 +410,7 @@ df_normalized <-
 df_normalized
 ```
 
-    ## # A tibble: 2,474,019 × 9
+    ## # A tibble: 2,502,832 × 9
     ##    date       county      state      fips  cases deaths popula…¹ cases…² death…³
     ##    <date>     <chr>       <chr>      <chr> <dbl>  <dbl>    <dbl>   <dbl>   <dbl>
     ##  1 2020-01-21 Snohomish   Washington 53061     1      0   786620 0.127         0
@@ -424,7 +423,7 @@ df_normalized
     ##  8 2020-01-25 Snohomish   Washington 53061     1      0   786620 0.127         0
     ##  9 2020-01-26 Maricopa    Arizona    04013     1      0  4253913 0.0235        0
     ## 10 2020-01-26 Los Angeles California 06037     1      0 10098052 0.00990       0
-    ## # … with 2,474,009 more rows, and abbreviated variable names ¹​population,
+    ## # … with 2,502,822 more rows, and abbreviated variable names ¹​population,
     ## #   ²​cases_per100k, ³​deaths_per100k
 
 You may use the following test to check your work.
@@ -489,6 +488,7 @@ Before turning you loose, let’s complete a couple guided EDA tasks.
 ``` r
 ## TASK: Compute mean and sd for cases_per100k and deaths_per100k
 df_normalized %>% 
+  filter(date == "2020-06-19") %>% 
   filter(!is.na(cases_per100k), !is.na(deaths_per100k)) %>% 
   summarize(cases_mean = mean(cases_per100k),
             deaths_mean = mean(deaths_per100k),
@@ -499,60 +499,80 @@ df_normalized %>%
     ## # A tibble: 1 × 4
     ##   cases_mean deaths_mean cases_sd deaths_sd
     ##        <dbl>       <dbl>    <dbl>     <dbl>
-    ## 1     10094.        174.    8484.      159.
+    ## 1       441.        16.0     722.      31.1
+
+``` r
+df_normalized %>% 
+  filter(date == "2021-06-19") %>% 
+  filter(!is.na(cases_per100k), !is.na(deaths_per100k)) %>% 
+  summarize(cases_mean = mean(cases_per100k),
+            deaths_mean = mean(deaths_per100k),
+            cases_sd = sd(cases_per100k),
+            deaths_sd = sd(deaths_per100k))
+```
+
+    ## # A tibble: 1 × 4
+    ##   cases_mean deaths_mean cases_sd deaths_sd
+    ##        <dbl>       <dbl>    <dbl>     <dbl>
+    ## 1     10281.        205.    2980.      112.
 
 ### **q7** Find the top 10 counties in terms of `cases_per100k`, and the top 10 in terms of `deaths_per100k`. Report the population of each county along with the per-100,000 counts. Compare the counts against the mean values you found in q6. Note any observations.
 
 ``` r
 ## TASK: Find the top 10 max cases_per100k counties; report populations as well
 df_normalized %>%  
-  filter(date == "2022-05-12") %>% 
-  arrange(desc(cases_per100k)) 
+  filter(date == "2021-06-19") %>% 
+  arrange(desc(cases_per100k)) %>% 
+  select(c(population, cases_per100k))
 ```
 
-    ## # A tibble: 3,211 × 9
-    ##    date       county            state fips  cases deaths popul…¹ cases…² death…³
-    ##    <date>     <chr>             <chr> <chr> <dbl>  <dbl>   <dbl>   <dbl>   <dbl>
-    ##  1 2022-05-12 Loving            Texas 48301   196      1     102 192157.   980. 
-    ##  2 2022-05-12 Chattahoochee     Geor… 13053  7486     22   10767  69527.   204. 
-    ##  3 2022-05-12 Nome Census Area  Alas… 02180  6245      5    9925  62922.    50.4
-    ##  4 2022-05-12 Northwest Arctic… Alas… 02188  4837     13    7734  62542.   168. 
-    ##  5 2022-05-12 Crowley           Colo… 08025  3344     30    5630  59396.   533. 
-    ##  6 2022-05-12 Bethel Census Ar… Alas… 02050 10362     41   18040  57439.   227. 
-    ##  7 2022-05-12 Dewey             Sout… 46041  3139     44    5779  54317.   761. 
-    ##  8 2022-05-12 Dimmit            Texas 48127  5760     51   10663  54019.   478. 
-    ##  9 2022-05-12 Jim Hogg          Texas 48247  2648     22    5282  50133.   417. 
-    ## 10 2022-05-12 Kusilvak Census … Alas… 02158  4084     14    8198  49817.   171. 
-    ## # … with 3,201 more rows, and abbreviated variable names ¹​population,
-    ## #   ²​cases_per100k, ³​deaths_per100k
+    ## # A tibble: 3,247 × 2
+    ##    population cases_per100k
+    ##         <dbl>         <dbl>
+    ##  1      10767        41061.
+    ##  2       5630        39254.
+    ##  3       5809        26579.
+    ##  4       9573        26460.
+    ##  5       5779        25575.
+    ##  6      13695        23578.
+    ##  7       7526        22947.
+    ##  8      10663        22920.
+    ##  9       6969        22299.
+    ## 10       5486        22257.
+    ## # … with 3,237 more rows
 
 ``` r
 ## TASK: Find the top 10 deaths_per100k counties; report populations as well
 df_normalized %>%  
-  filter(date == "2022-05-12") %>% 
-  arrange(desc(deaths_per100k)) 
+  filter(date == "2021-06-19") %>% 
+  arrange(desc(deaths_per100k))  %>% 
+  select(c(population, deaths_per100k))
 ```
 
-    ## # A tibble: 3,211 × 9
-    ##    date       county            state fips  cases deaths popul…¹ cases…² death…³
-    ##    <date>     <chr>             <chr> <chr> <dbl>  <dbl>   <dbl>   <dbl>   <dbl>
-    ##  1 2022-05-12 McMullen          Texas 48311   169      9     662  25529.   1360.
-    ##  2 2022-05-12 Galax city        Virg… 51640  2559     78    6638  38551.   1175.
-    ##  3 2022-05-12 Motley            Texas 48345   286     13    1156  24740.   1125.
-    ##  4 2022-05-12 Hancock           Geor… 13141  1587     90    8535  18594.   1054.
-    ##  5 2022-05-12 Emporia city      Virg… 51595  1187     55    5381  22059.   1022.
-    ##  6 2022-05-12 Towns             Geor… 13281  2400    116   11417  21021.   1016.
-    ##  7 2022-05-12 Jerauld           Sout… 46073   415     20    2029  20453.    986.
-    ##  8 2022-05-12 Loving            Texas 48301   196      1     102 192157.    980.
-    ##  9 2022-05-12 Robertson         Kent… 21201   672     21    2143  31358.    980.
-    ## 10 2022-05-12 Martinsville city Virg… 51690  3466    124   13101  26456.    946.
-    ## # … with 3,201 more rows, and abbreviated variable names ¹​population,
-    ## #   ²​cases_per100k, ³​deaths_per100k
+    ## # A tibble: 3,247 × 2
+    ##    population deaths_per100k
+    ##         <dbl>          <dbl>
+    ##  1       8535           808.
+    ##  2       6638           798.
+    ##  3       2029           789.
+    ##  4       5381           781.
+    ##  5        662           755.
+    ##  6       2619           725.
+    ##  7       4201           714.
+    ##  8       1408           710.
+    ##  9       5715           700.
+    ## 10       1156           692.
+    ## # … with 3,237 more rows
 
 **Observations**:
 
-- The top county by cases, Loving TX, has a greater cases total than
-  population count
+- The top county has 4x the mean number of cases, but within the top 3
+  counties, the number of cases decreases to only 2.5x the mean number,
+  leading me to believe that the top 2 are distinct outliers.
+  - TEN standard deviations away from the mean
+- The top counties by death count are also 4x the mean number of cases,
+  which is slightly less outlandish (but not very!), given that that is
+  6 standard deviations away from the mean
 
 ## Self-directed EDA
 
@@ -572,28 +592,40 @@ df_normalized %>%
 - Fix the *geographic exceptions* noted below to study New York City.
 - Your own idea!
 
-**DO YOUR OWN ANALYSIS HERE**
-
 ``` r
 df_normalized %>%
+  filter(state == c("Colorado", "Virginia", "North Carolina", "California", "Tennessee", "Georgia", "Massachusetts")) %>% 
   group_by(state, date) %>% 
-  mutate(mean = mean(deaths_per100k)) %>% 
+  mutate(mean = mean(cases_per100k)) %>% 
 
   ggplot(
     aes(date, mean, color = state)
   ) +
-  geom_line() +
-  scale_y_log10(labels = scales::label_number_si())
+  geom_line() + 
+  theme_minimal()
 ```
 
-    ## Warning: `label_number_si()` was deprecated in scales 1.2.0.
-    ## ℹ Please use the `scale_cut` argument of `label_number()` instead.
-
-    ## Warning: Transformation introduced infinite values in continuous y-axis
-
-    ## Warning: Removed 57614 rows containing missing values (`geom_line()`).
+    ## Warning in state == c("Colorado", "Virginia", "North Carolina", "California", :
+    ## longer object length is not a multiple of shorter object length
 
 ![](c06-covid19-assignment_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+- This is a graph of cases over time of the 7 places I have officially
+  lived in the United States, which I feel is a decent sample of
+  different geographic regions
+
+- The two places I would call “the South”, Tennessee and Georgia, have
+  the highest rates of infection, which makes sense; they had a much
+  more lax masking policy throughout the pandemic
+
+- Every state follows roughly the same series of spikes and plateaus,
+  probably roughly correlating with national mask mandates and their
+  ends
+
+- The values seem to oscillate over time, but the top and bottom limits
+  of each oscillation follow a remarkably smooth curve - not sure if
+  this is an artifact of ggplot or something about the data collection
+  process.
 
 Aside: Some visualization tricks
 
@@ -620,6 +652,11 @@ df_normalized %>%
     y = "Cases (per 100,000 persons)"
   )
 ```
+
+    ## Warning: `label_number_si()` was deprecated in scales 1.2.0.
+    ## ℹ Please use the `scale_cut` argument of `label_number()` instead.
+
+    ## Warning: Removed 789 rows containing missing values (`geom_line()`).
 
 ![](c06-covid19-assignment_files/figure-gfm/ma-example-1.png)<!-- -->
 

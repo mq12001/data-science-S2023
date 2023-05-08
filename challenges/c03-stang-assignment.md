@@ -161,7 +161,6 @@ df_stang_long <-
   pivot_longer(
     names_to = c(".value", "angle"),
     names_sep = "_",
-    values_to = "val",
     starts_with("E") | starts_with("mu"),
   ) %>% 
   select(everything(), nu = mu) %>% 
@@ -240,6 +239,25 @@ print("Very good!")
 ### **q2** Perform a basic EDA on the aluminum data *without visualization*. Use your analysis to answer the questions under *observations* below. In addition, add your own *specific* question that you’d like to answer about the data—you’ll answer it below in q3.
 
 ``` r
+df_stang_long
+```
+
+    ## # A tibble: 26 × 5
+    ##    thick alloy   angle     E    nu
+    ##    <dbl> <chr>   <int> <dbl> <dbl>
+    ##  1 0.022 al_24st     0 10600 0.321
+    ##  2 0.022 al_24st    45 10700 0.329
+    ##  3 0.022 al_24st    90 10500 0.31 
+    ##  4 0.022 al_24st     0 10600 0.323
+    ##  5 0.022 al_24st    45 10500 0.331
+    ##  6 0.022 al_24st    90 10700 0.323
+    ##  7 0.032 al_24st     0 10400 0.329
+    ##  8 0.032 al_24st    45 10400 0.318
+    ##  9 0.032 al_24st    90 10300 0.322
+    ## 10 0.032 al_24st     0 10300 0.319
+    ## # … with 16 more rows
+
+``` r
 summary(df_stang_long)
 ```
 
@@ -259,23 +277,36 @@ summary(df_stang_long)
     ##  Max.   :0.3310
 
 ``` r
-df_stang_long
+df_stang_long %>% distinct(alloy)
 ```
 
-    ## # A tibble: 26 × 5
-    ##    thick alloy   angle     E    nu
-    ##    <dbl> <chr>   <int> <dbl> <dbl>
-    ##  1 0.022 al_24st     0 10600 0.321
-    ##  2 0.022 al_24st    45 10700 0.329
-    ##  3 0.022 al_24st    90 10500 0.31 
-    ##  4 0.022 al_24st     0 10600 0.323
-    ##  5 0.022 al_24st    45 10500 0.331
-    ##  6 0.022 al_24st    90 10700 0.323
-    ##  7 0.032 al_24st     0 10400 0.329
-    ##  8 0.032 al_24st    45 10400 0.318
-    ##  9 0.032 al_24st    90 10300 0.322
-    ## 10 0.032 al_24st     0 10300 0.319
-    ## # … with 16 more rows
+    ## # A tibble: 1 × 1
+    ##   alloy  
+    ##   <chr>  
+    ## 1 al_24st
+
+``` r
+df_stang_long %>% distinct(angle)
+```
+
+    ## # A tibble: 3 × 1
+    ##   angle
+    ##   <int>
+    ## 1     0
+    ## 2    45
+    ## 3    90
+
+``` r
+df_stang_long %>% distinct(thick)
+```
+
+    ## # A tibble: 4 × 1
+    ##   thick
+    ##   <dbl>
+    ## 1 0.022
+    ## 2 0.032
+    ## 3 0.064
+    ## 4 0.081
 
 **Observations**:
 
@@ -288,8 +319,9 @@ df_stang_long
   - 0, 45, and 90
 - What thicknesses were tested?
   - .022, .032, .064, .081
-- Does the angle at which aluminum is tested have a measurable effect on
-  the material properties?
+
+  - Does the angle at which aluminum is tested have a measurable effect
+    on the material properties?
 
 ## Visualize
 
@@ -338,6 +370,9 @@ df_stang_long %>%
   - There does appear to be a difference in the material properties as
     the thickness of the material varies. This contradicts the above
     claim.
+  - However, this is not an exceptionally large dataset and we haven’t
+    learned how to do statistical analysis of significance yet, so this
+    evidence is not conclusive.
 
 # References
 

@@ -177,7 +177,7 @@ df_antibiotics %>%
   ggplot() + 
   geom_tile(aes(Drug, bacteria, fill = logMIC, color = gram))+
   scale_fill_gradient2(low = "white",
-                       mid = "#FFFFCC",
+                       mid = "purple",
                        high = "orange")
 ```
 
@@ -198,7 +198,8 @@ df_antibiotics %>%
   ggplot() + 
   geom_boxplot(aes(MIC, gram)) + 
   geom_vline(xintercept = 1) + 
-  scale_x_log10()
+  scale_x_log10() + 
+  xlab("MIC (penicillin)")
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.3-1.png)<!-- -->
@@ -218,7 +219,8 @@ df_antibiotics %>%
   ggplot() + 
   geom_point(aes(MIC, bacteria, color = Drug)) + 
   geom_vline(xintercept = 1) + 
-  scale_x_log10()
+  scale_x_log10() + 
+  ylab("Gram Positive Bacteria")
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.4-1.png)<!-- -->
@@ -234,11 +236,13 @@ your other visuals.
 
 ``` r
 df_antibiotics %>% 
-  filter(gram == 'negative') %>% 
+  filter(Drug == 'streptomycin') %>% 
   ggplot() + 
-  geom_point(aes(MIC, bacteria, color = Drug)) + 
+  geom_violin(aes(MIC, gram)) + 
   geom_vline(xintercept = 1) + 
-  scale_x_log10()
+  scale_x_log10() + 
+  xlab("MIC (streptomycin)") + 
+  coord_flip()
 ```
 
 ![](c05-antibiotics-assignment_files/figure-gfm/q1.5-1.png)<!-- -->

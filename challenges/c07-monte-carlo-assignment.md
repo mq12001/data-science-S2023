@@ -204,18 +204,18 @@ df_q1
 ```
 
     ## # A tibble: 1,000 × 3
-    ##        x     y  stat
-    ##    <dbl> <dbl> <dbl>
-    ##  1 0.956 0.164     4
-    ##  2 0.838 0.582     0
-    ##  3 0.988 0.242     0
-    ##  4 0.125 0.775     4
-    ##  5 0.437 0.509     4
-    ##  6 0.788 0.832     0
-    ##  7 0.264 0.254     4
-    ##  8 0.441 0.197     4
-    ##  9 0.603 0.102     4
-    ## 10 0.176 0.304     4
+    ##          x      y  stat
+    ##      <dbl>  <dbl> <dbl>
+    ##  1 0.941   0.451      0
+    ##  2 0.344   0.368      4
+    ##  3 0.0324  0.993      4
+    ##  4 0.00321 0.660      4
+    ##  5 0.172   0.200      4
+    ##  6 0.561   0.866      0
+    ##  7 0.521   0.0493     4
+    ##  8 0.974   0.112      4
+    ##  9 0.656   0.814      0
+    ## 10 0.773   0.475      4
     ## # … with 990 more rows
 
 ### **q2** Using your data in `df_q1`, estimate $\pi$.
@@ -230,7 +230,7 @@ pi_est
     ## # A tibble: 1 × 1
     ##   `mean(stat)`
     ##          <dbl>
-    ## 1         3.04
+    ## 1         3.14
 
 # Quantifying Uncertainty
 
@@ -250,7 +250,7 @@ df_q1 %>%
     stat,
     c(
       "mean" = ~mean(., na.rm = TRUE),
-      "se" = ~sd(., na.rm = TRUE) / length(.)
+      "se" = ~sd(., na.rm = TRUE) / sqrt(length(.))
     )
   )) %>%
   mutate(
@@ -263,18 +263,19 @@ df_q1 %>%
     ## # A tibble: 1 × 5
     ##   stat_mean stat_se pi_lo pi_hi     n
     ##       <dbl>   <dbl> <dbl> <dbl> <dbl>
-    ## 1      3.04 0.00171  3.04  3.05  1000
+    ## 1      3.14  0.0519  3.01  3.28  1000
 
 **Observations**:
 
 - Does your interval include the true value of $\pi$?
-  - Nope, off in the hundredths place!
+  - Yes, now that I fixed how the SE is calculated!
 - What confidence level did you choose?
   - 99%
 - Was your sample size $n$ large enough? Why do you say that?
-  - No, my sample size of 1000 was not large enough, because the
-    reliability of this representation is limited - it rarely includes
-    the actual value for pi.
+  - Yes, considering that the sample large is quite large and my
+    confidence level is 99%, I can be reasonably sure that 99% of the
+    time my CI will include the actual value of pi, and here this is
+    demonstratively true.
 
 # References
 
