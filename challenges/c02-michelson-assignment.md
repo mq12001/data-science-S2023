@@ -392,6 +392,9 @@ df_q2 %>%
 - Lower temperature seems to result in wore quality photos, but there’s
   not really enough evidence to substantiate that claim in a meaningful
   way
+- In summary: No, there are no other patterns in the data that
+  explicitly would explain the difference between Michelson’s estimate
+  and LIGHTSPEED_VACUUM.
 
 ## Bibliography
 
